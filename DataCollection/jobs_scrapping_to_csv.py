@@ -41,7 +41,7 @@ def get_job_description_naukri(url, headless=False):
         # )
         # jd_text = desc_element.text.strip()
 
-        # ✅ Click "read more" if it exists
+        #  Click "read more" if it exists
         try:
             read_more = WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "a[class^='styles_read-more-link']"))
@@ -81,7 +81,7 @@ def get_job_description_naukri(url, headless=False):
 
         # print("Details found:", details)  # Debugging line to see what details were extracted
         
-        # ✅ Now get the full JD
+        #  Now get the full JD
         desc_element = wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, "section[class^='styles_job-desc-container']"))
         )
@@ -94,8 +94,8 @@ def get_job_description_naukri(url, headless=False):
         return jd_text, sorted(set(skills)), details
 
     except Exception as e:
-        print("❌ Selenium scraping failed:", e)
-        return "❌ Job description not found", []
+        print(" Selenium scraping failed:", e)
+        return " Job description not found", []
 
     finally:
         driver.quit()
@@ -148,14 +148,14 @@ def get_search_results(params, max_retries=3):
             if res.status_code == 200:
                 return res.json()
             elif res.status_code in [403, 406]:
-                print(f"⛔ Blocked with status {res.status_code}. Retrying in 60s...")
+                print(f" Blocked with status {res.status_code}. Retrying in 60s...")
                 time.sleep(60)
             else:
-                print(f"⚠️ Unexpected status {res.status_code}. Retrying in 10s...")
+                print(f" Unexpected status {res.status_code}. Retrying in 10s...")
                 time.sleep(10)
 
         except Exception as e:
-            print("❌ Network error:", e)
+            print(" Network error:", e)
             time.sleep(15)
 
     return None  # All retries failed
@@ -307,20 +307,20 @@ def safe_scrape():
                 try:
                     # res = requests.get("https://www.naukri.com/jobapi/v3/search", headers=HEADERS_SEARCH, params=params)
                     # if res.status_code != 200:
-                    #     print(f"    ❌ Search API error: {res.status_code}")
+                    #     print(f"    -> Search API error: {res.status_code}")
                     #     time.sleep(60)
                     #     continue
                     # jobs = res.json().get("jobDetails", [])
 
                     data = get_search_results(params)
                     if not data:
-                        print("❌ Failed to get results after retries.")
+                        print(" Failed to get results after retries.")
                         continue
                     jobs = data.get("jobDetails", [])
 
                     
                     if not jobs or not isinstance(jobs, list) or len(jobs) == 0:
-                        print(f"    ⛔ No more jobs found on page {page}. Stopping skill.")
+                        print(f"    -> No more jobs found on page {page}. Stopping skill.")
                         break  # exit page loop
 
                     for job in jobs:
@@ -347,13 +347,13 @@ def safe_scrape():
                         req_skills = extracted_skills
 
                         req_skills_short = job.get('tagsAndSkills')
-                        print(f"    ✅ {title} at {company}")
+                        print(f"    -> {title} at {company}")
 
                         writer.writerow([skill, title, company, details['Industry Type'], details['Department'], details['Employment Type'], details['Role Category'], experience, salary, location, jd_url, cjd, job_id, req_skills, req_skills_short])
                         count = count + 1
                         time.sleep(random.uniform(1.5, 2.5))
                 except Exception as e:
-                    print(f"    ❌ Error: {e}")
+                    print(f"    -> Error: {e}")
                     time.sleep(60)
                 time.sleep(random.uniform(5, 10))  # Cooldown after page   
 
@@ -364,16 +364,16 @@ def safe_scrape():
             print("  ⏸️ Cooldown before next skill...")
             time.sleep(random.uniform(15, 25))
 
-        print("\n✅ Jobs scraped:", count)
-        print("\n✅ Scraping completed safely! Data saved to 'naukri_skills_jobs_safe2.csv'")
+        print("\n Jobs scraped:", count)
+        print("\n Scraping completed safely! Data saved to 'naukri_skills_jobs_safe2.csv'")
 
         end_time = time.time()
         total_time = end_time - start_time
 
-        # print(f"\n✅ Scraping complete. Total time taken: {total_time:.2f} seconds.")
+        # print(f"\n Scraping complete. Total time taken: {total_time:.2f} seconds.")
 
         mins, secs = divmod(total_time, 60)
-        print(f"\n✅ Done in {int(mins)} minutes and {int(secs)} seconds.")
+        print(f"\n Done in {int(mins)} minutes and {int(secs)} seconds.")
 
 # --- Run ---
 if __name__ == "__main__":
