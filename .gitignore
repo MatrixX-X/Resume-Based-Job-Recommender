@@ -1,4 +1,3 @@
-*.ipynb_checkpoints/
-*.log
-__pycache__/
-local_qdrant/
+"*.ipynb_checkpoints/" 
+"*.log" 
+"__pycache__/" 
